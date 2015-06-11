@@ -25,13 +25,13 @@ var analyze = AV.analyze({
 // 发送自定义的统计事件
 analyze.send({
 
-    // 事件名称 
+    // 事件名称
     event: 'test-event-name',
 
     // 事件属性，任意数据
     attr: {
-        a: 123,
-        b: 'abc'
+        testa: 123,
+        testb: 'abc'
     },
 
     // 该事件持续时间（毫秒）

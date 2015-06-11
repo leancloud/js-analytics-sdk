@@ -10,7 +10,7 @@
 void function(win) {
 
     // 当前版本
-    var VERSION = '0.0.0';
+    var VERSION = '0.0.1';
 
     // 获取命名空间
     var AV = win.AV || {};
@@ -29,18 +29,7 @@ void function(win) {
     // 命名空间，挂载私有方法
     var engine = {};
 
-    // 主函数
-    AV.analyze = function(options) {
-        if (typeof options !== 'object') {
-            throw('AV.analyze need a argument at least.');
-        }
-        else if (!options.appId) {
-            throw('Options must have appId.');
-        }
-        else if (!options.appKey) {
-            throw('Options must have appKey.');
-        }
-
+    var newAnalyze = function(options) {
         var appId = options.appId;
         var appKey = options.appKey;
 
@@ -52,9 +41,6 @@ void function(win) {
 
         return {
 
-            // 查询统计数据
-            // search: function() {},
-
             // 发送统计数据
             send: function(options, callback) {
                 var eventsList = [];
@@ -63,7 +49,6 @@ void function(win) {
                 if (options && options.length) {
                     eventsList = options;
                 }
-
                 // 如果不是数组，那就是对象
                 else {
 
@@ -82,15 +67,19 @@ void function(win) {
                         attr: options.attr,
 
                         // 持续时长
-                        duration: options.duration
-                    };
+                        duration: options.duration,
 
+                        // 内部使用
+                        tag: options.tag
+                    };
                     eventsList.push(eventObj);
                 }
 
                 // 处理下数据
                 for (var i = 0, l = eventsList.length; i < l; i ++) {
                     eventsList[i].attributes = eventsList[i].attr;
+
+                    // 清理掉多余字段
                     delete eventsList[i].attr;
                 }
 
@@ -131,6 +120,30 @@ void function(win) {
         };
     };
 
+    // 主函数
+    AV.analyze = function(options) {
+        if (typeof options !== 'object') {
+            throw('AV.analyze need a argument at least.');
+        }
+        else if (!options.appId) {
+            throw('Options must have appId.');
+        }
+        else if (!options.appKey) {
+            throw('Options must have appKey.');
+        }
+
+        // 创建一个新的实例
+        var analyzeObj = newAnalyze(options);
+
+        // 启动自动页面时长统计
+        engine.pageView(analyzeObj);
+
+        // 启动自动 session 时长统计
+        engine.sessionView(analyzeObj);
+
+        return analyzeObj;
+    };
+
     // 赋值版本号
     AV.analyze.version = VERSION;
 
@@ -146,6 +159,66 @@ void function(win) {
             win.localStorage.setItem(key, id);
         }
         return id;
+    };
+
+    // 自动统计页面相关
+    engine.pageView = function(analyzeObj) {
+        var startTime;
+        var endTime;
+        var page;
+
+        function start() {
+            startTime = tool.now();
+            page = win.location.href;
+        }
+
+        function end() {
+            endTime = tool.now();
+            analyzeObj.send({
+
+                // 必须为 _page 表示一次页面访问
+                event: '_page',
+
+                // 页面停留时间，单位毫秒
+                duration: endTime - startTime,
+
+                // 页面名称
+                tag: page
+            });
+        }
+
+        // 默认自动启动
+        start();
+
+        // 监听 url 变化（包括 hash 变化）
+        win.addEventListener('hashchange', function(e) {
+            // 页面发生变化，发送一次页面统计
+            end();
+            // 再次启动新的统计
+            start();
+        });
+
+        // 当页面关闭的时候
+        win.addEventListener('beforeunload', function() {
+            // 发送一次
+            end();
+        });
+    };
+
+    // 自动统计一次 session 周期的时间
+    engine.sessionView = function(analyzeObj) {
+        var startTime = tool.now();
+        win.addEventListener('beforeunload', function() {
+            var endTime = tool.now();
+            analyzeObj.send({
+
+                //必须为 _session.close 表示一次使用结束
+                event: '_session.close',
+
+                // 使用时长，单位毫秒
+                duration: endTime - startTime
+            });
+        });
     };
 
     // 获取一个唯一 id
@@ -177,7 +250,8 @@ void function(win) {
             // 检测认为 2xx 的返回都是成功
             if (xhr.status >= 200 && xhr.status < 300) {
                 callback(JSON.parse(xhr.responseText));
-            } else {
+            }
+            else {
                 callback(null, JSON.parse(xhr.responseText));
             }
         };
@@ -186,6 +260,11 @@ void function(win) {
             throw('Network error.');
         };
         xhr.send(JSON.stringify(options.data));
+    };
+
+    // 获取当前时间的时间戳
+    tool.now = function() {
+        return new Date().getTime();
     };
 
 } (window);
