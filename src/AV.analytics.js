@@ -1,7 +1,7 @@
 /**
  * @author wangxiao
  * @date 2015-06-11
- * @homepage http://github.com/leancloud/js-analyze-sdk
+ * @homepage http://github.com/leancloud/js-analytics-sdk
  *
  * 每位工程师都有保持代码优雅的义务
  * Each engineer has a duty to keep the code elegant
@@ -29,7 +29,7 @@ void function(win) {
     // 命名空间，挂载私有方法
     var engine = {};
 
-    var newAnalyze = function(options) {
+    var newAnalytics = function(options) {
         var appId = options.appId;
         var appKey = options.appKey;
 
@@ -121,9 +121,9 @@ void function(win) {
     };
 
     // 主函数
-    AV.analyze = function(options) {
+    AV.analytics = function(options) {
         if (typeof options !== 'object') {
-            throw('AV.analyze need a argument at least.');
+            throw('AV.analytics need a argument at least.');
         }
         else if (!options.appId) {
             throw('Options must have appId.');
@@ -133,26 +133,26 @@ void function(win) {
         }
 
         // 创建一个新的实例
-        var analyzeObj = newAnalyze(options);
+        var analyticsObj = newAnalytics(options);
 
         // 启动自动页面时长统计
-        engine.pageView(analyzeObj);
+        engine.pageView(analyticsObj);
 
         // 启动自动 session 时长统计
-        engine.sessionView(analyzeObj);
+        engine.sessionView(analyticsObj);
 
-        return analyzeObj;
+        return analyticsObj;
     };
 
     // 赋值版本号
-    AV.analyze.version = VERSION;
+    AV.analytics.version = VERSION;
 
     // 挂载私有方法
-    AV.analyze._tool = tool;
-    AV.analyze._engine = engine;
+    AV.analytics._tool = tool;
+    AV.analytics._engine = engine;
 
     engine.getId = function() {
-        var key = 'leancloud-analyze-id';
+        var key = 'leancloud-analytics-id';
         var id = win.localStorage.getItem(key);
         if (!id) {
             id = tool.getId();
@@ -162,7 +162,7 @@ void function(win) {
     };
 
     // 自动统计页面相关
-    engine.pageView = function(analyzeObj) {
+    engine.pageView = function(analyticsObj) {
         var startTime;
         var endTime;
         var page;
@@ -174,7 +174,7 @@ void function(win) {
 
         function end() {
             endTime = tool.now();
-            analyzeObj.send({
+            analyticsObj.send({
 
                 // 必须为 _page 表示一次页面访问
                 event: '_page',
@@ -206,11 +206,11 @@ void function(win) {
     };
 
     // 自动统计一次 session 周期的时间
-    engine.sessionView = function(analyzeObj) {
+    engine.sessionView = function(analyticsObj) {
         var startTime = tool.now();
         win.addEventListener('beforeunload', function() {
             var endTime = tool.now();
-            analyzeObj.send({
+            analyticsObj.send({
 
                 //必须为 _session.close 表示一次使用结束
                 event: '_session.close',

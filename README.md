@@ -1,6 +1,6 @@
 # LeanCloud 分析统计 JavaScript SDK
 
-## 详细使用方法请看 [官方文档](https://leancloud.cn/docs/js_analyze.html)
+## 详细使用方法请看 [官方文档](https://leancloud.cn/docs/js_analytics.html)
 
 ## 官方新版本发布流程
 
@@ -10,7 +10,7 @@
 * 发布到 bower
 
 ```
-bower register leancloud-analyze git@github.com:leancloud/js-analyze-sdk.git
+bower register leancloud-analytics git@github.com:leancloud/js-analytics-sdk.git
 ```
 
 * 修改 changelog.md

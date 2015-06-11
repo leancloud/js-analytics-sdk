@@ -1,4 +1,4 @@
-// 详细请了解官方文档  https://leancloud.cn/docs/js_analyze.html
+// 详细请了解官方文档  https://leancloud.cn/docs/js_analytics.html
 
 // 请将 AppId 改为你自己的 AppId
 var appId = 'u5rykzag4wz0y3h2qnbaicbcjrlft8euv27ppvvlebry9ccz';
@@ -7,7 +7,7 @@ var appId = 'u5rykzag4wz0y3h2qnbaicbcjrlft8euv27ppvvlebry9ccz';
 var appKey = 'dl9vmrtcc5z1kj8rmj4n3wq1t9u76me49hzf7aa04lxbt7i3';
 
 // 实例化分析统计功能
-var analyze = AV.analyze({
+var analytics = AV.analytics({
 
     // 设置 AppId
     appId: appId,
@@ -23,7 +23,7 @@ var analyze = AV.analyze({
 });
 
 // 发送自定义的统计事件
-analyze.send({
+analytics.send({
 
     // 事件名称
     event: 'test-event-name',
