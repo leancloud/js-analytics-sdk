@@ -39,6 +39,19 @@ void function(win) {
         // 推广渠道
         var appChannel = options.channel || null;
 
+        // 分析统计接口
+        var apiHost;
+        switch (options.region) {
+            case 'us':
+                apiHost = 'us-api.leancloud.cn';
+            break;
+            // 默认中国区节点
+            default:
+                apiHost = 'api.leancloud.cn';
+            break;
+        }
+        var apiUrl = 'https://' + apiHost + '/1.1/stats/open/collect';
+
         return {
 
             // 发送统计数据
@@ -83,8 +96,6 @@ void function(win) {
                     delete eventsList[i].attr;
                 }
 
-                // 分析统计接口
-                var url = 'https://api.leancloud.cn/1.1/stats/open/collect';
                 var data = {
                     client: {
                         id: engine.getId(),
@@ -101,7 +112,7 @@ void function(win) {
                 };
 
                 tool.ajax({
-                    url: url,
+                    url: apiUrl,
                     method: 'post',
                     data: data,
                     appId: appId,

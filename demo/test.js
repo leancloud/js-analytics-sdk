@@ -1,10 +1,10 @@
 // 详细请了解官方文档  https://leancloud.cn/docs/js_analytics.html
 
 // 请将 AppId 改为你自己的 AppId
-var appId = 'u5rykzag4wz0y3h2qnbaicbcjrlft8euv27ppvvlebry9ccz';
+var appId = 'QvNM6AG2khJtBQoRMWqfLV-zGzoHsz';
 
 // 请将 AppKey 改为你自己的 AppKey
-var appKey = 'dl9vmrtcc5z1kj8rmj4n3wq1t9u76me49hzf7aa04lxbt7i3';
+var appKey = 'be2YmUduiuEnC9bLRnnV';
 
 // 实例化分析统计功能
 var analytics = AV.analytics({
@@ -19,7 +19,10 @@ var analytics = AV.analytics({
     version: '1.8.6',
 
     // 你当前应用的渠道或者你想指定的渠道
-    channel: 'weixin'
+    channel: 'weixin',
+
+    // 选择服务地区（默认为国内节点）
+    // region: 'cn'
 });
 
 // 发送自定义的统计事件
